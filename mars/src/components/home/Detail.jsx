@@ -1,23 +1,23 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import {todayPhoto} from '../../services/nasaApi'
+import {photoDetail} from '../../services/nasaApi'
 
-export default class Home extends Component {
+export default class Detail extends Component {
     
     state = {
         data: {}
     }
     
     componentDidMount(){
-        todayPhoto()
+        photoDetail()
         .then(r=> {
-            console.log(r)
             this.setState({data:r})
         })
         .catch(e=>console.log(e))
     }
     render() {
         const {data} = this.state
+        console.log(data.photos)
     return (
       <div>
        <nav className="navbar" role="navigation" aria-label="main navigation">
@@ -58,13 +58,12 @@ export default class Home extends Component {
                 </div>
             </div>
             </nav>
-            <div style={{textAlign:"center"}}>
-                <h1 style={{fontSize:"2rem", fontWeight:"bold"}}>{data.title}</h1>
-                <img src={data.hdurl} alt={data.title}/>
+            {data.photos ? data.photos.map((foto, index)=> {
+                return <div key={index} style={{textAlign:"center"}}>
+                <h1 style={{fontSize:"2rem", fontWeight:"bold"}}>{foto.rover.name}</h1>
+                <img src={foto.img_src} alt={foto.rover.name}/>
             </div>
-            <Link to="/all">
-            <button>Ver todas las fotos</button>
-            </Link>
+            })  : <div>Loading</div>}
       </div>
     )
   }

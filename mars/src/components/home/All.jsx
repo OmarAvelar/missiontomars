@@ -1,23 +1,27 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import {todayPhoto} from '../../services/nasaApi'
+import {photos} from '../../services/nasaApi'
 
-export default class Home extends Component {
+export default class All extends Component {
     
     state = {
-        data: {}
+        data: []
     }
     
-    componentDidMount(){
-        todayPhoto()
+    componentWillMount(){
+        photos()
         .then(r=> {
-            console.log(r)
             this.setState({data:r})
         })
         .catch(e=>console.log(e))
     }
     render() {
         const {data} = this.state
+        let fotos = []
+        if(data.photos) {for(let i=1; i<50; i++){
+            fotos.push(data.photos[i])
+        }}
+        console.log(fotos)
     return (
       <div>
        <nav className="navbar" role="navigation" aria-label="main navigation">
@@ -58,13 +62,28 @@ export default class Home extends Component {
                 </div>
             </div>
             </nav>
-            <div style={{textAlign:"center"}}>
-                <h1 style={{fontSize:"2rem", fontWeight:"bold"}}>{data.title}</h1>
-                <img src={data.hdurl} alt={data.title}/>
-            </div>
-            <Link to="/all">
-            <button>Ver todas las fotos</button>
-            </Link>
+            {fotos.map((foto,index)=> {
+                return <div key={index}>
+                    <div className="card">
+                        <div className="card-image">
+                            <figure className="image is-4by3">
+                            <Link to="/detail">
+                                <img src={foto.img_src} alt="Placeholder"/>
+                            </Link>
+                            </figure>
+                        </div>
+                        <div className="card-content">
+                            <div className="media">
+                                <div className="media-content">
+                                    <p className="title is-4">{foto.rover.name}</p>
+                                    <p className="subtitle is-6">{foto.camera.full_name}</p>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                </div>
+            })}
+            
       </div>
     )
   }
